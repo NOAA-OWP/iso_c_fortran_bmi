@@ -1,109 +1,108 @@
-#### OWP Open Source Project Template Instructions
+# ISO C Fortran BMI bindings
 
-1. Create a new project.
-2. [Copy these files into the new project](#installation)
-3. Update the README, replacing the contents below as prescribed.
-4. Add any libraries, assets, or hard dependencies whose source code will be included
-   in the project's repository to the _Exceptions_ section in the [TERMS](TERMS.md).
-  - If no exceptions are needed, remove that section from TERMS.
-5. If working with an existing code base, answer the questions on the [open source checklist](opensource-checklist.md)
-6. Delete these instructions and everything up to the _Project Title_ from the README.
-7. Write some great software and tell people about it.
+## About
 
-> Keep the README fresh! It's the first thing people see and will make the initial impression.
+This is a small library that exposes a C/Fortran interoperability layer for BMI functions.  The library presents the BMI functions as a set of free functions that operate on a properly initialized and boxed Fortran BMI object.  This requires Fortran BMI models to implement a `register_bmi` function which, when called by a C/C++ executable, provides an opaque handle to the underlying BMI type `BMI_TYPE`:
 
-## Installation
+```fortran
+  function register_bmi(this) result(bmi_status) bind(C, name="register_bmi")
+   use, intrinsic:: iso_c_binding, only: c_ptr, c_loc, c_int
+   use iso_c_bmif_2_0
+   implicit none
+   type(c_ptr) :: this
+   integer(kind=c_int) :: bmi_status
+   !Create the model instance to use
+   type(BMI_TYPE), pointer :: bmi_model
+   !Create a simple pointer wrapper
+   type(box), pointer :: bmi_box
 
-To install all of the template files, run the following script from the root of your project's directory:
+   !allocate model
+   allocate(BMI_TYPE::bmi_model)
+   !allocate the pointer box
+   allocate(bmi_box)
+
+   !associate the wrapper pointer the created model instance
+   bmi_box%ptr => bmi_model
+
+   if( .not. associated( bmi_box ) .or. .not. associated( bmi_box%ptr ) ) then
+    bmi_status = BMI_FAILURE
+   else
+    !Return the pointer to box
+    this = c_loc(bmi_box)
+    bmi_status = BMI_SUCCESS
+   endif
+ end function register_bmi
+```
+
+# Usage
+
+Once the handle has been obtained by calling `register_bmi` it can be be passed to any of the BMI functions in liu of the usual `BMI *`, with the rest of the arguments following the same semantics as the BMI interface arguements.  A small example of calling `update` on a Fortran BMI model from a C binary linked to this ISO C BMI library and an approriate BMI model implementing `register_bmi`
+
+```C
+
+extern register_bmi(void *);
+extern initialize(void *, char *);
+extern update(void *);
+extern finalize(void*);
+
+int main(int argc, char** argv)
+{
+    void** bmi_handle;
+    int status = -1;
+
+    char name[2048];
+    //Get the opaque handle to pass to the BMI functions
+    status = register_bmi(&bmi_handle);
+
+    char init_file[2048] = "namelist.input";
+    //Initialize the BMI model conained in the bmi_handle
+    status = initialize(&bmi_handle, init_file);
+    //Update the model contained in the bmi_handle
+    update(&bmi_handle);
+
+    //Finalize and shut down the model
+    status = finalize(&bmi_handle);
+}
 
 ```
-bash -c "$(curl -s https://raw.githubusercontent.com/NOAA-OWP/owp-open-source-project-template/open_source_template.sh)"
+
+## Building The Library
+
+First, cd into the library project directory
+```sh
+cd extern/iso_c_fortran_bmi
+```
+Before library files can be built, a CMake build system must be generated.  E.g.:
+```sh
+cmake -B cmake_build -S .
+```
+Note that when there is an existing directory, it may sometimes be necessary to clear it and regenerate, especially if any changes were made to the [CMakeLists.txt](CMakeLists.txt) file.
+
+After there is build system directory, the shared library can be built using:
+```sh
+cmake --build cmake_build --target iso_c_bmi -- -j 2
+```
+This will build a `cmake_build/libiso_c_bmi.so.<version>.<ext>` file, where the version is configured within the CMake config, and the extension depends on the local machine's operating system.    
+
+## Building the test C binary
+
+First, cd into the test directory
+
+```sh
+cd extern/iso_c_fortran_bmi/test
 ```
 
-----
+Generate the build system
+```sh
+cmake -B test_iso_c -S .
+```
 
-# Project Title
+Build the executable
+```sh
+cmake --build test_iso_c --target test -- -j 2
+```
 
-**Description**:  Put a meaningful, short, plain-language description of what
-this project is trying to accomplish and why it matters.
-Describe the problem(s) this project solves.
-Describe how this software can improve the lives of its audience.
-
-Other things to include:
-
-  - **Technology stack**: Indicate the technological nature of the software, including primary programming language(s) and whether the software is intended as standalone or as a module in a framework or other ecosystem.
-  - **Status**:  Alpha, Beta, 1.1, etc. It's OK to write a sentence, too. The goal is to let interested people know where this project is at. This is also a good place to link to the [CHANGELOG](CHANGELOG.md).
-  - **Links to production or demo instances**
-  - Describe what sets this apart from related-projects. Linking to another doc or page is OK if this can't be expressed in a sentence or two.
-
-
-**Screenshot**: If the software has visual components, place a screenshot after the description; e.g.,
-
-![](https://raw.githubusercontent.com/NOAA-OWP/owp-open-source-project-template/master/doc/Screenshot.png)
-
-
-## Dependencies
-
-Describe any dependencies that must be installed for this software to work.
-This includes programming languages, databases or other storage mechanisms, build tools, frameworks, and so forth.
-If specific versions of other software are required, or known not to work, call that out.
-
-## Installation
-
-Detailed instructions on how to install, configure, and get the project running.
-This should be frequently tested to ensure reliability. Alternatively, link to
-a separate [INSTALL](INSTALL.md) document.
-
-## Configuration
-
-If the software is configurable, describe it in detail, either here or in other documentation to which you link.
-
-## Usage
-
-Show users how to use the software.
-Be specific.
-Use appropriate formatting when showing code snippets.
-
-## How to test the software
-
-If the software includes automated tests, detail how to run those tests.
-
-## Known issues
-
-Document any known significant shortcomings with the software.
-
-## Getting help
-
-Instruct users how to get help with this software; this might include links to an issue tracker, wiki, mailing list, etc.
-
-**Example**
-
-If you have questions, concerns, bug reports, etc, please file an issue in this repository's Issue Tracker.
-
-## Getting involved
-
-This section should detail why people should get involved and describe key areas you are
-currently focusing on; e.g., trying to get feedback on features, fixing certain bugs, building
-important pieces, etc.
-
-General instructions on _how_ to contribute should be stated with a link to [CONTRIBUTING](CONTRIBUTING.md).
-
-
-----
-
-## Open source licensing info
-
-These links must be included in the final version of your project README (keep this section,
-as is, but remove this sentence):
-
-1. [TERMS](TERMS.md)
-2. [LICENSE](LICENSE)
-
-
-----
-
-## Credits and references
-
-1. Projects that inspired you
-2. Related projects
-3. Books, papers, talks, or other sources that have meaningful impact or influence on this project
+Run the test.  Note the binary needs to run relative to the two inputs `namelist.input` and `bondville.dat` in the test directory.
+```sh
+./test_iso_c/test
+```
