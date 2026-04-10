@@ -22,10 +22,4 @@ target_link_libraries(testbmifortranmodel PUBLIC iso_c_bmi)
 unset(_TESTBMIFORTRAN_BINARY_DIR)
 unset(_TESTBMIFORTRAN_OBJECTS)
 
-include(GNUInstallDirs)
-install(TARGETS testbmifortranmodel
-        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
-configure_file(testbmifortranmodel.pc.in testbmifortranmodel.pc @ONLY)
-install(FILES ${CMAKE_BINARY_DIR}/testbmifortranmodel.pc
-        DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/pkgconfig)
+# testbmifortranmodel is a test fixture — intentionally not installed.

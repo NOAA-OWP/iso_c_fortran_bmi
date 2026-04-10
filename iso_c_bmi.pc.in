@@ -1,12 +1,12 @@
-prefix=@CMAKE_INSTALL_PREFIX@
-exec_prefix=@CMAKE_INSTALL_PREFIX@
+prefix=${pcfiledir}/../..
+exec_prefix=${prefix}
 libdir=${exec_prefix}/@CMAKE_INSTALL_LIBDIR@
-includedir=${prefix}/@CMAKE_INSTALL_INCLUDEDIR@
+includedir=${prefix}/@CMAKE_INSTALL_INCLUDEDIR@/iso_c_fortran_bmi
 
-Name: @ISO_C_FORTRAN_BMI_LIB_NAME_CMAKE@
-Description: @ISO_C_FORTRAN_BMI_DESC_CMAKE@
+Name: iso_c_bmi
+Description: ISO C Fortran BMI bindings
 Version: @PROJECT_VERSION@
 
 Requires:
-Libs: -L${libdir} -lmylib
+Libs: -L${libdir} -liso_c_bmi
 Cflags: -I${includedir}
