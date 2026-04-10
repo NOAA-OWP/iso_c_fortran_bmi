@@ -75,3 +75,13 @@ bower_components/
 .grunt/
 src/vendor/
 dist/
+
+# IDE Files #
+#############
+/.idea/
+
+# CMake Build Dirs #
+####################
+/cmake_build*
+/cmake-build*
+
