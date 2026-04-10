@@ -1,0 +1,5 @@
+@PACKAGE_INIT@
+
+include("${CMAKE_CURRENT_LIST_DIR}/iso_c_fortran_bmiTargets.cmake")
+
+check_required_components(iso_c_fortran_bmi)
