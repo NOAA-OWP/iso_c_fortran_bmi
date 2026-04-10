@@ -17,7 +17,8 @@ file(GLOB _ISO_C_BMI_OBJECTS CONFIGURE_DEPENDS "${_source_dir}/src/*.f90")
 get_target_property(_ISO_C_BMI_BINARY_DIR iso_c_bmi BINARY_DIR)
 set_target_properties(iso_c_bmi
     PROPERTIES
-        Fortran_MODULE_DIRECTORY "${_ISO_C_BMI_BINARY_DIR}/mod")
+        Fortran_MODULE_DIRECTORY "${_ISO_C_BMI_BINARY_DIR}/mod"
+        VERSION ${PROJECT_VERSION})
 
 target_sources(iso_c_bmi PRIVATE ${_ISO_C_BMI_OBJECTS})
 target_compile_options(iso_c_bmi PRIVATE -cpp -ffree-line-length-none)
@@ -35,3 +36,11 @@ install(DIRECTORY ${CMAKE_Fortran_MODULE_DIRECTORY}
 configure_file(iso_c_bmi.pc.in iso_c_bmi.pc @ONLY)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/iso_c_bmi.pc
         DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/pkgconfig)
+
+if(PROJECT_IS_TOP_LEVEL)
+    include(CTest)
+    # include(CTest) above defines BUILD_TESTING as a cache option (default ON).
+    if(BUILD_TESTING)
+        add_subdirectory(test)
+    endif()
+endif()

@@ -68,41 +68,37 @@ int main(int argc, char** argv)
 
 ## Building The Library
 
-First, cd into the library project directory
-```sh
-cd extern/iso_c_fortran_bmi
-```
-Before library files can be built, a CMake build system must be generated.  E.g.:
+### Generate the build system
+Before library files can be built, CMake must generate a build system.  E.g., from the top-level directory of the repository:
+
 ```sh
 cmake -B cmake_build -S .
 ```
-Note that when there is an existing directory, it may sometimes be necessary to clear it and regenerate, especially if any changes were made to the [CMakeLists.txt](CMakeLists.txt) file.
 
+This will create an out-of-source build directory `cmake_build/` within the top-level repo directory.
+
+
+### Build the Shared Library Target
 After there is build system directory, the shared library can be built using:
 ```sh
-cmake --build cmake_build --target iso_c_bmi -- -j 2
+cmake --build cmake_build --target iso_c_bmi
 ```
 This will build a `cmake_build/libiso_c_bmi.so.<version>.<ext>` file, where the version is configured within the CMake config, and the extension depends on the local machine's operating system.    
 
-## Building the test C binary
+## Building and Running the Tests
 
-First, cd into the test directory
+When this repository is built as a top-level CMake project, a companion test binary (`test_iso_c`) and a small Fortran BMI test model (`testbmifortranmodel`) are configured alongside the library.  No separate build-system generation is required — the same `cmake_build` directory from above is reused.
 
+Build the test target:
 ```sh
-cd extern/iso_c_fortran_bmi/test
+cmake --build cmake_build --target test_iso_c
 ```
 
-Generate the build system
+Run the tests via CTest:
 ```sh
-cmake -B test_iso_c -S .
+ctest --test-dir cmake_build --output-on-failure
 ```
 
-Build the executable
-```sh
-cmake --build test_iso_c --target test -- -j 2
-```
+The test executable needs to run relative to its input config (`test_bmi_fortran_config_0.txt` in `test/`); CTest handles this automatically by setting the working directory.
 
-Run the test.  Note the binary needs to run relative to the two inputs `namelist.input` and `bondville.dat` in the test directory.
-```sh
-./test_iso_c/test
-```
+When this repository is consumed as a subdirectory from another CMake project (e.g. ngen), the test targets are not added — only the `iso_c_bmi` library target is exposed.
