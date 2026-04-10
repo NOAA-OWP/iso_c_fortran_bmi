@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.12...3.26)
 # Output Targets:
 # - `iso_c_bmi` (installed / exported as `iso_c_fortran_bmi::iso_c_bmi`)
 
-project(iso_c_fortran_bmi VERSION 1.0.0 LANGUAGES Fortran)
+project(iso_c_fortran_bmi VERSION 1.1.0 LANGUAGES Fortran)
 
 include(GNUInstallDirs)
 
