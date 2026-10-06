@@ -1,6 +1,12 @@
 All notable changes to this project will be documented in this file.
 We follow the [Semantic Versioning 2.0.0](http://semver.org/) format.
 
+## 1.2.0 - 2026-10-06
+
+### Fixed
+
+- Functions taking string arguments now avoid hidden thread-safety pitfalls
+- Functions taking string arguments avoid repeatedly calculating string length
 
 ## 1.1.0 - 2026-04-10
 
