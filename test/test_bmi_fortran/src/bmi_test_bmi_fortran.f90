@@ -1,10 +1,6 @@
 module bmitestbmi
   
-#ifdef NGEN_ACTIVE
   use bmif_2_0_iso
-#else
-  use bmif_2_0
-#endif
 
   use test_model
   use bmi_grid
@@ -1169,7 +1165,6 @@ end function test_finalize
     bmi_status = this%update_until(this%model%current_model_time + this%model%time_step_size)
   end function test_update
 
-#ifdef NGEN_ACTIVE
   function register_bmi(this) result(bmi_status) bind(C, name="register_bmi")
    use, intrinsic:: iso_c_binding, only: c_ptr, c_loc, c_int
    use iso_c_bmif_2_0
@@ -1197,5 +1192,4 @@ end function test_finalize
     bmi_status = BMI_SUCCESS
    endif
  end function register_bmi
-#endif
 end module bmitestbmi

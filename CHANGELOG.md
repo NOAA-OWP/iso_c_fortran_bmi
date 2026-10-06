@@ -18,6 +18,7 @@ We follow the [Semantic Versioning 2.0.0](http://semver.org/) format.
 
 - Stale `NGEN_IS_MAIN_PROJECT` fallback in `test/test_bmi_fortran/CMakeLists.txt` that reached out to a sibling `iso_c_fortran_bmi` directory no longer present at that path.
 - `install()` calls for the `testbmifortranmodel` test fixture — it's a test fixture, not a shipped artifact, and its broken `.pc` install path was causing `cmake --install` to fail.
+- `NGEN_ACTIVE` conditional compilation from the `testbmifortranmodel` test fixture, along with its now-unused standalone `bmif_2_0` module (`test/test_bmi_fortran/src/bmi.f90`); the fixture always builds against the ISO C BMI.
 - Stale `extern/iso_c_fortran_bmi/` paths and the separate `cd test && cmake ...` flow from the README.
 
 ### Fixed
