@@ -25,7 +25,7 @@ module bmi_grid
         integer(kind=c_int) :: id
         integer(kind=c_int) :: rank
         integer(kind=c_int) :: size
-        ! here kind(scalar) just referers to the kind of all things in the enum
+        ! here kind(scalar) just refers to the kind of all things in the enum
         integer(kind(scalar)) :: type
         ! These allocatable dynamic size arrays make this type impossible to directly bind(c)
         integer(kind=c_int), allocatable :: shape(:)

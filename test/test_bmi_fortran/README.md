@@ -1,4 +1,4 @@
-# Test BMI Model Fotran Implementation
+# Test BMI Model Fortran Implementation
 
 * [About](#about)
 * [Building](#building)
@@ -12,21 +12,21 @@ This is a implementation of a Fortran-based model that fulfills the Fortran lang
 
 # Building
 
-To generate the shared library files, build the `testbmifotranmodel` target in the generated build system.  This needs to be separate from the main NextGen build system.
+This model is configured as part of the main project build (when built as a top-level project with `BUILD_TESTING` enabled, the default), so no separate build system is needed.  To generate the shared library files, build the `testbmifortranmodel` target in the main build system.
 
 #### Generating a Build System Directory
 
 Run from the project root directory:
 
-    cmake -B extern/test_bmi_fortran/cmake_build -S extern/test_bmi_fortran
+    cmake -B cmake_build -S .
 
-To regenerate, simply remove the `extern/test_bmi_fortran/cmake_build` directory and run the command again.
+To regenerate, simply remove the `cmake_build` directory and run the command again.
 
 #### Building the Shared Library
 
 Again, from the project root directory:
 
-    cmake --build extern/test_bmi_fortran/cmake_build --target testbmifortranmodel
+    cmake --build cmake_build --target testbmifortranmodel
 
 This should generate the appropriate library files for your system.
 
