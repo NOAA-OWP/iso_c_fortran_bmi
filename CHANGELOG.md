@@ -7,6 +7,7 @@ We follow the [Semantic Versioning 2.0.0](http://semver.org/) format.
 
 - Functions taking string arguments now avoid hidden thread-safety pitfalls
 - Functions taking string arguments avoid repeatedly calculating string length
+- Test checks for failure to open init_config file
 
 ## 1.1.0 - 2026-04-10
 
