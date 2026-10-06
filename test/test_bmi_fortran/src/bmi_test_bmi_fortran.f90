@@ -184,6 +184,11 @@ function read_init_config(model, config_file) result(bmi_status)
   end if
   ! Open and read Namelist file.
   open (action='read', file=trim(config_file), iostat=rc, newunit=fu)
+  if (rc /= 0) then
+     write(stderr, '(A)') 'Failed to open ' // trim(config_file)
+     bmi_status = BMI_FAILURE
+     return
+  end if
   read (nml=test, iostat=rc, unit=fu)
   if (rc /= 0) then
       backspace(fu)
